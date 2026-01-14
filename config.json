@@ -1,0 +1,19 @@
+{
+  "desktop": {
+    "enabled": true,
+    "icon": "dialog-information",
+    "timeout": 10000
+  },
+  "webhook": {
+    "enabled": true,
+    "type": "feishu",
+    "url": "https://open.feishu.cn/open-apis/bot/v2/hook/YOUR_HOOK_ID"
+  },
+  "sound": {
+    "enabled": true,
+    "file": "",
+    "critical_file": "",
+    "bell_repeat": 2
+  },
+  "log_file": ""
+}

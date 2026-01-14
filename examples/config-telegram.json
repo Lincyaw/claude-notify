@@ -1,0 +1,17 @@
+{
+  "desktop": {
+    "enabled": true,
+    "icon": "dialog-information",
+    "timeout": 10000
+  },
+  "webhook": {
+    "enabled": true,
+    "type": "telegram",
+    "telegram_bot_token": "YOUR_BOT_TOKEN",
+    "telegram_chat_id": "YOUR_CHAT_ID"
+  },
+  "sound": {
+    "enabled": true,
+    "bell_repeat": 2
+  }
+}

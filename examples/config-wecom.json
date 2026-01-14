@@ -1,0 +1,16 @@
+{
+  "desktop": {
+    "enabled": true,
+    "icon": "dialog-information",
+    "timeout": 10000
+  },
+  "webhook": {
+    "enabled": true,
+    "type": "wecom",
+    "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY"
+  },
+  "sound": {
+    "enabled": true,
+    "bell_repeat": 2
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "desktop": {
+    "enabled": true,
+    "icon": "dialog-information",
+    "timeout": 10000
+  },
+  "webhook": {
+    "enabled": true,
+    "type": "slack",
+    "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+  },
+  "sound": {
+    "enabled": false
+  }
+}
