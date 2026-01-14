@@ -218,3 +218,82 @@ get_urgency() {
             ;;
     esac
 }
+
+# Check if smart notify is enabled
+is_smart_notify_enabled() {
+    local enabled
+    enabled=$(get_config ".smart_notify.enabled" "true")
+    [[ "$enabled" == "true" ]]
+}
+
+# Check if a command matches a permission rule
+# Rule format: ToolName(pattern:*)
+match_permission_rule() {
+    local tool_name="$1"
+    local tool_input="$2"
+    local rule="$3"
+
+    # Parse rule: ToolName(pattern:*)
+    local rule_tool rule_pattern
+    if [[ "$rule" =~ ^([A-Za-z]+)\((.+):\*\)$ ]]; then
+        rule_tool="${BASH_REMATCH[1]}"
+        rule_pattern="${BASH_REMATCH[2]}"
+    else
+        return 1
+    fi
+
+    # Check tool type matches
+    [[ "$tool_name" != "$rule_tool" ]] && return 1
+
+    # Check pattern based on tool type
+    case "$tool_name" in
+        "Bash")
+            local command
+            command=$(echo "$tool_input" | jq -r '.command // ""' 2>/dev/null)
+            [[ "$command" == "$rule_pattern"* ]] && return 0
+            ;;
+        "Write"|"Edit"|"Read"|"NotebookEdit")
+            local file_path
+            file_path=$(echo "$tool_input" | jq -r '.file_path // .notebook_path // ""' 2>/dev/null)
+            [[ "$file_path" == "$rule_pattern"* ]] && return 0
+            ;;
+    esac
+
+    return 1
+}
+
+# Check if the tool call is auto-approved by Claude Code
+is_auto_approved() {
+    local event_type="$1"
+    local event_json="$2"
+
+    # Only applies to PreToolUse events
+    [[ "$event_type" != "PreToolUse" ]] && return 1
+
+    local tool_name tool_input working_dir
+    tool_name=$(get_tool_name "$event_json")
+    tool_input=$(get_tool_input "$event_json")
+    working_dir=$(echo "$event_json" | jq -r '.working_directory // .cwd // ""' 2>/dev/null)
+
+    # Check both project-level and global settings
+    local settings_files=(
+        "$working_dir/.claude/settings.local.json"
+        "$HOME/.claude/settings.local.json"
+    )
+
+    for settings_file in "${settings_files[@]}"; do
+        [[ ! -f "$settings_file" ]] && continue
+
+        local rules
+        rules=$(jq -r '.permissions.allow[]? // empty' "$settings_file" 2>/dev/null)
+
+        while IFS= read -r rule; do
+            [[ -z "$rule" ]] && continue
+            if match_permission_rule "$tool_name" "$tool_input" "$rule"; then
+                return 0
+            fi
+        done <<< "$rules"
+    done
+
+    return 1
+}

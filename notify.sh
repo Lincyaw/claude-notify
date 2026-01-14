@@ -48,6 +48,14 @@ main() {
 
     log "INFO" "Processing event: $event_type"
 
+    # Smart notify: skip notification if command is auto-approved
+    if is_smart_notify_enabled; then
+        if is_auto_approved "$event_type" "$event_json"; then
+            log "INFO" "Skipping notification - command auto-approved"
+            exit 0
+        fi
+    fi
+
     # Send notifications based on enabled methods
     local sent=false
 

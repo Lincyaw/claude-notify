@@ -1,4 +1,7 @@
 {
+  "smart_notify": {
+    "enabled": true
+  },
   "desktop": {
     "enabled": true,
     "icon": "dialog-information",
