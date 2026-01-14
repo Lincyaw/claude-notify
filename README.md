@@ -32,7 +32,42 @@ The installer will:
 
 Edit `~/.claude/notifications/config.json`:
 
-### Desktop Notifications
+> **Note**: Only Feishu (Lark) webhook has been tested. Other notification methods (Slack, Discord, Telegram, WeCom, DingTalk, Desktop, Sound) are implemented but not tested.
+
+### Webhook URL Configuration (Recommended: Environment Variable)
+
+For security, it's recommended to set the webhook URL via environment variable instead of storing it in config files:
+
+```bash
+# Add to your ~/.bashrc or ~/.zshrc
+export CLAUDE_NOTIFICATION_WEBHOOK_URL="https://open.feishu.cn/open-apis/bot/v2/hook/your-actual-hook-id"
+```
+
+The priority order is: **Environment variable > config.json**
+
+### Webhook (Feishu / Lark) - Tested
+
+```json
+{
+  "webhook": {
+    "enabled": true,
+    "type": "feishu"
+  }
+}
+```
+
+### Other Webhook Types (Not Tested)
+
+The following webhook types are supported but have not been tested:
+
+- **Slack**: `"type": "slack"`, `"url": "https://hooks.slack.com/services/..."`
+- **Discord**: `"type": "discord"`, `"url": "https://discord.com/api/webhooks/..."`
+- **Telegram**: `"type": "telegram"`, requires `telegram_bot_token` and `telegram_chat_id`
+- **WeCom**: `"type": "wecom"`, `"url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=..."`
+- **DingTalk**: `"type": "dingtalk"`, `"url": "https://oapi.dingtalk.com/robot/send?access_token=..."`
+- **Generic**: `"type": "generic"`, custom webhook with configurable `method`, `headers`, and `template`
+
+### Desktop Notifications (Not Tested)
 
 ```json
 {
@@ -44,80 +79,7 @@ Edit `~/.claude/notifications/config.json`:
 }
 ```
 
-### Webhook (Slack)
-
-```json
-{
-  "webhook": {
-    "enabled": true,
-    "type": "slack",
-    "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
-  }
-}
-```
-
-### Webhook (Discord)
-
-```json
-{
-  "webhook": {
-    "enabled": true,
-    "type": "discord",
-    "url": "https://discord.com/api/webhooks/YOUR/WEBHOOK/URL"
-  }
-}
-```
-
-### Webhook (Telegram)
-
-```json
-{
-  "webhook": {
-    "enabled": true,
-    "type": "telegram",
-    "telegram_bot_token": "YOUR_BOT_TOKEN",
-    "telegram_chat_id": "YOUR_CHAT_ID"
-  }
-}
-```
-
-### Webhook (WeCom / Enterprise WeChat)
-
-```json
-{
-  "webhook": {
-    "enabled": true,
-    "type": "wecom",
-    "url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY"
-  }
-}
-```
-
-### Webhook (DingTalk)
-
-```json
-{
-  "webhook": {
-    "enabled": true,
-    "type": "dingtalk",
-    "url": "https://oapi.dingtalk.com/robot/send?access_token=YOUR_TOKEN"
-  }
-}
-```
-
-### Webhook (Feishu / Lark)
-
-```json
-{
-  "webhook": {
-    "enabled": true,
-    "type": "feishu",
-    "url": "https://open.feishu.cn/open-apis/bot/v2/hook/YOUR_HOOK_ID"
-  }
-}
-```
-
-### Sound Alerts
+### Sound Alerts (Not Tested)
 
 ```json
 {
@@ -126,24 +88,6 @@ Edit `~/.claude/notifications/config.json`:
     "file": "/path/to/custom/sound.wav",
     "critical_file": "/path/to/urgent/sound.wav",
     "bell_repeat": 2
-  }
-}
-```
-
-### Custom Webhook
-
-```json
-{
-  "webhook": {
-    "enabled": true,
-    "type": "generic",
-    "url": "https://your-api.example.com/notify",
-    "method": "POST",
-    "content_type": "application/json",
-    "headers": {
-      "Authorization": "Bearer YOUR_TOKEN"
-    },
-    "template": "{\"text\": \"{{title}}: {{message}}\"}"
   }
 }
 ```

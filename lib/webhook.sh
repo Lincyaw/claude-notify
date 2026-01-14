@@ -9,10 +9,11 @@ send_webhook_notification() {
     local urgency="${3:-normal}"
 
     local webhook_url
-    webhook_url=$(get_config ".webhook.url" "")
+    # Priority: environment variable > config file
+    webhook_url="${CLAUDE_NOTIFICATION_WEBHOOK_URL:-$(get_config ".webhook.url" "")}"
 
-    if [[ -z "$webhook_url" ]]; then
-        log "ERROR" "Webhook URL not configured"
+    if [[ -z "$webhook_url" || "$webhook_url" == "YOUR_HOOK_ID" || "$webhook_url" == *"YOUR_HOOK_ID"* ]]; then
+        log "ERROR" "Webhook URL not configured. Set CLAUDE_NOTIFICATION_WEBHOOK_URL environment variable or update config.json"
         return 1
     fi
 
